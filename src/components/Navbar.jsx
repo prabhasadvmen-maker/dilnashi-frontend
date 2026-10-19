@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import {
   DilnashiCrest,
   SearchIcon,
@@ -64,7 +65,17 @@ export default function Navbar({
 
       {/* Top Utility Tier */}
       <div className="header-top-bar">
-        {/* Left: Couture / Jewellery / Accessories Switcher */}
+        {/* Mobile Hamburger Button (Left on Mobile) */}
+        <button
+          className="header-action-btn mobile-hamburger-left"
+          onClick={() => setMobileMenuOpen(true)}
+          title="Open Menu"
+          aria-label="Open Navigation Menu"
+        >
+          <MenuIcon size={24} />
+        </button>
+
+        {/* Left: Couture / Jewellery / Accessories Switcher (Desktop) */}
         <div className="brand-universe-tabs">
           <button
             className={`brand-tab-btn ${activeUniverse === 'COUTURE' ? 'active' : ''}`}
@@ -102,7 +113,7 @@ export default function Navbar({
             alt="DILNASHI Haute Couture & High Jewellery"
             className="navbar-brand-gold-logo"
             style={{
-              height: '58px',
+              height: '56px',
               width: 'auto',
               maxHeight: '62px',
               objectFit: 'contain',
@@ -115,8 +126,8 @@ export default function Navbar({
           <span
             className="brand-logo-sub"
             style={{
-              fontSize: '0.53rem',
-              letterSpacing: '0.34em',
+              fontSize: '0.52rem',
+              letterSpacing: '0.32em',
               color: 'var(--gold-deep)',
               marginTop: '1px',
               fontWeight: 600,
@@ -159,22 +170,12 @@ export default function Navbar({
           </button>
 
           <button
-            className="header-action-btn"
+            className="header-action-btn desktop-only-action"
             onClick={onOpenAppointment}
             title="Private Atelier Appointment"
             aria-label="Account / Appointment"
           >
             <UserIcon size={20} />
-          </button>
-
-          {/* Mobile hamburger */}
-          <button
-            className="header-action-btn mobile-menu-toggle"
-            style={{ display: 'none' }}
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label="Menu"
-          >
-            {mobileMenuOpen ? <CloseIcon size={24} /> : <MenuIcon size={24} />}
           </button>
         </div>
       </div>
@@ -385,57 +386,99 @@ export default function Navbar({
         )}
       </nav>
 
-      {/* Mobile Menu Drawer */}
-      {mobileMenuOpen && (
+      {/* Mobile Menu Drawer (Portaled to body to escape sticky header stacking context) */}
+      {mobileMenuOpen && typeof document !== 'undefined' && createPortal(
         <div
-          className="couture-modal-backdrop"
+          className="couture-modal-backdrop mobile-drawer-backdrop"
           onClick={() => setMobileMenuOpen(false)}
         >
           <div
-            className="couture-slideover"
-            style={{ left: 0, right: 'auto' }}
+            className="couture-slideover couture-mobile-drawer"
             onClick={(e) => e.stopPropagation()}
           >
-            <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border-light)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                <DilnashiCrest className="w-8 h-8" />
-                <span style={{ fontFamily: 'var(--font-serif)', letterSpacing: '0.2em', fontWeight: 600 }}>DILNASHI</span>
+            {/* Drawer Header with Gold Logo and Close Button */}
+            <div className="mobile-drawer-header">
+              <div className="mobile-drawer-brand" onClick={() => handleNavClick('/')}>
+                <img
+                  src="/dilnashi-gold-logo.png"
+                  alt="DILNASHI"
+                  style={{ height: '44px', width: 'auto', objectFit: 'contain' }}
+                />
               </div>
-              <button onClick={() => setMobileMenuOpen(false)}>
-                <CloseIcon size={20} />
+              <button
+                className="mobile-drawer-close-btn"
+                onClick={() => setMobileMenuOpen(false)}
+                aria-label="Close Navigation Menu"
+              >
+                <CloseIcon size={22} />
               </button>
             </div>
-            <div style={{ padding: '2rem 1.5rem', display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+
+            {/* Quick Universe Switcher in Drawer */}
+            <div className="mobile-drawer-universe-tabs">
+              <button
+                className={`drawer-tab-btn ${activeUniverse === 'COUTURE' ? 'active' : ''}`}
+                onClick={() => {
+                  setActiveUniverse('COUTURE');
+                  handleNavClick('/women');
+                }}
+              >
+                COUTURE
+              </button>
+              <button
+                className={`drawer-tab-btn ${activeUniverse === 'JEWELLERY' ? 'active' : ''}`}
+                onClick={() => {
+                  setActiveUniverse('JEWELLERY');
+                  handleNavClick('/jewellery');
+                }}
+              >
+                JEWELLERY
+              </button>
+              <button
+                className={`drawer-tab-btn ${activeUniverse === 'ACCESSORIES' ? 'active' : ''}`}
+                onClick={() => {
+                  setActiveUniverse('ACCESSORIES');
+                  handleNavClick('/new-arrivals');
+                }}
+              >
+                ACCESSORIES
+              </button>
+            </div>
+
+            {/* Navigation Links */}
+            <div className="mobile-drawer-nav-list">
               {NAVIGATION.map((item) => (
                 <button
                   key={item.id}
-                  style={{
-                    textAlign: 'left',
-                    fontFamily: 'var(--font-serif)',
-                    fontSize: '0.95rem',
-                    letterSpacing: '0.12em',
-                    color: currentPath === item.path ? 'var(--gold-primary)' : 'var(--text-main)',
-                  }}
+                  className={`mobile-drawer-nav-item ${currentPath === item.path ? 'active' : ''}`}
                   onClick={() => handleNavClick(item.path)}
                 >
-                  {item.label}
+                  <span>{item.label}</span>
+                  {item.badge && <span className="drawer-item-badge">{item.badge}</span>}
                 </button>
               ))}
-              <div style={{ marginTop: '2rem', borderTop: '1px solid var(--border-light)', paddingTop: '1.5rem' }}>
-                <button
-                  className="btn-luxury-gold"
-                  style={{ width: '100%' }}
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    onOpenAppointment();
-                  }}
-                >
-                  BOOK PRIVATE APPOINTMENT
-                </button>
+            </div>
+
+            {/* Drawer Footer Actions */}
+            <div className="mobile-drawer-footer">
+              <button
+                className="btn-luxury-gold mobile-drawer-appointment-btn"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  onOpenAppointment();
+                }}
+              >
+                BOOK PRIVATE ATELIER APPOINTMENT
+              </button>
+
+              <div className="mobile-drawer-ateliers">
+                <span className="ateliers-title">ATELIERS & SALONS</span>
+                <span className="ateliers-list">NEW DELHI • MUMBAI • DUBAI • LONDON</span>
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </header>
   );

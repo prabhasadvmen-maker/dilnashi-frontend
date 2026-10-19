@@ -32,6 +32,7 @@ export default function QuickViewModal({
       onClick={onClose}
     >
       <div
+        className="quickview-modal-grid"
         style={{
           background: '#ffffff',
           width: '100%',
@@ -41,8 +42,6 @@ export default function QuickViewModal({
           border: '1px solid var(--border-light)',
           boxShadow: '0 25px 70px rgba(0, 0, 0, 0.35)',
           position: 'relative',
-          display: 'grid',
-          gridTemplateColumns: '1.1fr 1fr',
         }}
         onClick={(e) => e.stopPropagation()}
       >
