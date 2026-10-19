@@ -229,7 +229,7 @@ img {
 }
 
 .mobile-hamburger-left {
-  display: none;
+  display: none !important;
 }
 
 .brand-universe-tabs {
