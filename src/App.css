@@ -1,0 +1,12 @@
+/* DILNASHI Haute Couture App Wrapper */
+.dilnashi-application {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background-color: var(--bg-white);
+}
+
+.main-content-flow {
+  flex-grow: 1;
+}
